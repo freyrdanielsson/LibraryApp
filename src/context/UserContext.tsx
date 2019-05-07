@@ -12,7 +12,7 @@ const getUser = async () => {
     }
 };
 
-const setUser = async (newUser: any) => {
+const saveUser = async (newUser: any) => {
     try {
         if(newUser !== '') {
             await AsyncStorage.setItem('@user', newUser);
@@ -28,7 +28,7 @@ const setUser = async (newUser: any) => {
 // TODO: Make Interface for User
 const user = getUser();
 
-export const Context = React.createContext({
+export const UserContext = React.createContext({
     fetching: false,
     authenticated: !!user, // avoid undefined
     user,
@@ -47,7 +47,7 @@ interface State {
 
 interface Props {}
 
-export default class UserContext extends Component<Props, State> {
+export default class User extends Component<Props, State> {
     state = {
         fetching: false,
         authenticated: !!user,
@@ -60,19 +60,20 @@ export default class UserContext extends Component<Props, State> {
     }
 
     logoutUser = async () => {
-        await setUser('');
+        await saveUser('');
+        this.setState({ user: null, authenticated: false });
     }
 
     render() {
         const { children } = this.props;
         return (
-            <Context.Provider value={{
+            <UserContext.Provider value={{
                 ...this.state,
                 loginUser: this.loginUser,
                 logoutUser: this.logoutUser,
             }}>
                 {children}
-            </Context.Provider>
+            </UserContext.Provider>
         );
     }
 

@@ -18,7 +18,7 @@ export default function AuthLoadingScreen(props: Props) {
         const getToken = async () => {
             const token = await AsyncStorage.getItem('@userToken');
             
-            props.navigation.navigate(token ? 'App' : 'App');
+            props.navigation.navigate(token ? 'App' : 'Auth');
         };
         getToken();
     });
