@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TextInput, View, Dimensions} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 
 // TODO: Import components
@@ -21,13 +22,15 @@ export default function LoginScreen() {
             loginUser(username, password);
     }
 
-    function onUsernameChange(e: any): void {
-        const { target: { value = '' } = {} } = e;
+
+    // target vs currentTarget?
+    function onUsernameChange(e: React.ChangeEvent<HTMLInputElement>): void {
+        const { currentTarget: { value = '' } = {} } = e;
         setUsername(value);
     }
 
-    function onPasswordChange(e: any): void {
-        const { target: { value = '' } = {} } = e;
+    function onPasswordChange(e: React.ChangeEvent<HTMLInputElement>): void {
+        const { currentTarget: { value = '' } = {} } = e;
         setPassword(value);
     }
 
@@ -36,9 +39,20 @@ export default function LoginScreen() {
             {({fetching, user, loginUser, message}) => {
                 return (
                     <View style={styles.container}>
-                        <Text style={styles.welcome}>Todo, import components</Text>
-                        <Text style={styles.instructions}>This is LoginScreen</Text>
-                     </View>
+                        <View style={styles.inputContainer}>
+                            <Icon name={'ios-person'} size={28} style={styles.inputIcon}/>
+                            <TextInput 
+                                style={styles.input} 
+                                placeholder={'Username'}/>
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <Icon name={'ios-lock'} size={28} style={styles.inputIcon}/>
+                            <TextInput 
+                                style={styles.input} 
+                                placeholder={'Password'}
+                                secureTextEntry={true}/>
+                        </View>
+                    </View>
                 )
             }}
         </UserContext.Consumer>
@@ -46,23 +60,43 @@ export default function LoginScreen() {
 }
 
 
+const { width: WIDTH } = Dimensions.get('window')
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#F5FCFF',
+        flex: 1,
+        justifyContent: 'center',
+        // alignItems: 'center',
+        backgroundColor: '#F5FCFF',
     },
-    welcome: {
-      fontSize: 20,
-      textAlign: 'center',
-      margin: 10,
+    inputContainer: {
+        marginTop: 10,
+        marginBottom: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        backgroundColor: '#F5FCFF',
     },
     instructions: {
-      fontSize: 36,
-      textAlign: 'center',
-      color: '#333333',
-      marginBottom: 5,
+        fontSize: 36,
+        textAlign: 'center',
+        color: '#333333',
+        marginBottom: 5,
+    },
+    input: {
+        width: WIDTH - 55,
+        borderRadius: 25,
+        fontSize: 16,
+        paddingTop: 10,
+        paddingRight: 10,
+        paddingBottom: 10,
+        paddingLeft: 36,
+        backgroundColor: 'rgba(0, 0, 0, 0.35)',
+        color: 'rgba(255, 255, 255, 0.7)',
+    },
+    inputIcon: {
+        position: 'absolute',
+        left: 26,
+        padding: 10,
     },
   });
