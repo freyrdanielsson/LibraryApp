@@ -1,13 +1,25 @@
 import React, { useState } from 'react';
-import {StyleSheet, Text, TextInput, View, Dimensions} from 'react-native';
+import {
+    Dimensions,
+    StyleSheet, 
+    Text, 
+    TextInput,
+    TouchableOpacity,
+    View,
+    Platform, 
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
 // TODO: Import components
 
-import { UserContext } from '../context/UserContext';
+import UserContextProvider, { UserContext } from '../context/UserContext';
 
-export default function LoginScreen() {
+interface Props {
+    navigation: any
+}
+
+export default function LoginScreen(props: Props) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
@@ -15,8 +27,7 @@ export default function LoginScreen() {
     // loginUser which will be sent from the rendered jsx component
     // that function will be the one gotten from the context provider
     // which in return just updates the context parameters.
-    const onSubmit = (loginUser: (username: string, password: string) => void) => 
-        async (e: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = (loginUser: any) => async (e: any) => {
             e.preventDefault();
 
             loginUser(username, password);
@@ -24,38 +35,44 @@ export default function LoginScreen() {
 
 
     // target vs currentTarget?
-    function onUsernameChange(e: React.ChangeEvent<HTMLInputElement>): void {
-        const { currentTarget: { value = '' } = {} } = e;
+    function onUsernameChange(value: string): void {
         setUsername(value);
     }
 
-    function onPasswordChange(e: React.ChangeEvent<HTMLInputElement>): void {
-        const { currentTarget: { value = '' } = {} } = e;
+    function onPasswordChange(value: string): void {
         setPassword(value);
     }
 
     return(
-        <UserContext.Consumer>
-            {({fetching, user, loginUser, message}) => {
-                return (
-                    <View style={styles.container}>
-                        <View style={styles.inputContainer}>
-                            <Icon name={'ios-person'} size={28} style={styles.inputIcon}/>
-                            <TextInput 
-                                style={styles.input} 
-                                placeholder={'Username'}/>
+        <UserContextProvider navigate={props.navigation.navigate}>
+            <UserContext.Consumer>
+                {({fetching, user, loginUser, message}) => {
+                    return (
+                        <View style={styles.container}>
+                            <View style={styles.inputContainer}>
+                                <Icon name={Platform.OS === 'ios' ? 'ios-person' : 'md-person'} size={28} style={styles.inputIcon}/>
+                                <TextInput 
+                                    style={styles.input} 
+                                    placeholder={'Username'}
+                                    onChangeText={onUsernameChange}/>
+                            </View>
+                            <View style={styles.inputContainer}>
+                                <Icon name={Platform.OS === 'ios' ? 'ios-lock' : 'md-lock'} size={28} style={styles.inputIcon}/>
+                                <TextInput 
+                                    style={styles.input} 
+                                    placeholder={'Password'}
+                                    secureTextEntry={true}
+                                    onChangeText={onPasswordChange}/>
+                            </View>
+                            <TouchableOpacity style={styles.loginButton} onPress={onSubmit(loginUser)}>
+                                <Text>Login Button</Text>
+                            </TouchableOpacity>
                         </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name={'ios-lock'} size={28} style={styles.inputIcon}/>
-                            <TextInput 
-                                style={styles.input} 
-                                placeholder={'Password'}
-                                secureTextEntry={true}/>
-                        </View>
-                    </View>
-                )
-            }}
-        </UserContext.Consumer>
+                    )
+                }}
+            </UserContext.Consumer>
+        </UserContextProvider>
+        
     )
 }
 
@@ -77,12 +94,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
     },
-    instructions: {
-        fontSize: 36,
-        textAlign: 'center',
-        color: '#333333',
-        marginBottom: 5,
-    },
     input: {
         width: WIDTH - 55,
         borderRadius: 25,
@@ -99,4 +110,10 @@ const styles = StyleSheet.create({
         left: 26,
         padding: 10,
     },
+    loginButton: {
+        alignItems: 'center',
+        backgroundColor: '#DDDDDD',
+        padding: 10,
+        margin: 20,
+    }
   });

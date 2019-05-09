@@ -16,9 +16,11 @@ export default function AuthLoadingScreen(props: Props) {
     // Fetch the token from storage then navigate to our appropriate place
     useEffect(() => {
         const getToken = async () => {
-            const token = await AsyncStorage.getItem('@userToken');
+            const token = await AsyncStorage.getItem('@user');
+            console.log( 'token',token);
             
             props.navigation.navigate(token ? 'App' : 'Auth');
+            await AsyncStorage.removeItem('@user');
         };
         getToken();
     });

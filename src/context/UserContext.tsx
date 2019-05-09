@@ -33,8 +33,8 @@ export const UserContext = React.createContext({
     authenticated: !!user, // avoid undefined
     user,
     message: [],
-    loginUser: async (username: string, password: string) => {return},
-    logoutUser: async () => {return},
+    loginUser: async (username: string, password: string) => {},
+    logoutUser: async () => {},
 });
 
 // Maybe useless...
@@ -45,9 +45,11 @@ interface State {
     user: any,
 }
 
-interface Props {}
+interface Props {
+    navigate?: any,
+}
 
-export default class User extends Component<Props, State> {
+export default class UserContextProvider extends Component<Props, State> {
     state = {
         fetching: false,
         authenticated: !!user,
@@ -56,7 +58,9 @@ export default class User extends Component<Props, State> {
     }
 
     loginUser = async (username: string, password: string) => {
-        // Login the user..
+        console.log(username, password);
+        await saveUser(username);
+        this.props.navigate('AuthLoading');
     }
 
     logoutUser = async () => {
